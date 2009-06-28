@@ -1,5 +1,8 @@
-# TODO: need header stuffs
-# ....
+# #--
+# Copyright (C)2009 Ilya Grigorik
+#
+# You can redistribute this under the terms of the Ruby
+# #--
 
 module EventMachine
   class PubSubHubBub

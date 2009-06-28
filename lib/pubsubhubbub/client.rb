@@ -9,10 +9,10 @@ module EventMachine
       @hub = hub.kind_of?(URI) ? hub : URI::parse(hub)
     end
 
-    # Publish one or more URLs to a hub.
-
-    def publish(feed)
-      data = {'hub.url' => feed, 'hub.mode' => 'publish'}
+    def publish(*feeds)
+      data = feeds.flatten.collect do |feed|
+        {'hub.url' => feed, 'hub.mode' => 'publish'}.to_params
+      end.join("&")
 
       r = EventMachine::HttpRequest.new(@hub).post :body => data
       r.callback { 

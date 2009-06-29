@@ -5,7 +5,7 @@
 # #--
 
 module EventMachine
-  class PubSubHubBub
+  class PubSubHubbub
     include EventMachine::Deferrable
 
     def initialize(hub)

@@ -3,7 +3,7 @@ require 'spec'
 require 'eventmachine'
 require 'lib/pubsubhubbub'
 
-describe EventMachine::PubSubHubBub do
+describe EventMachine::PubSubHubbub do
 
   def failed
     EventMachine.stop
@@ -12,7 +12,7 @@ describe EventMachine::PubSubHubBub do
 
   it "should publish single feed to hub" do
     EventMachine.run {
-      pub = EventMachine::PubSubHubBub.new('http://pubsubhubbub.appspot.com/publish').publish "http://www.test.com/"
+      pub = EventMachine::PubSubHubbub.new('http://pubsubhubbub.appspot.com/publish').publish "http://www.test.com/"
 
       pub.errback { fail }
       pub.callback {
@@ -25,7 +25,7 @@ describe EventMachine::PubSubHubBub do
   it "should publish multiple feeds to hub" do
     EventMachine.run {
       feeds = ['http://www.test.com', 'http://www.test.com/2']
-      pub = EventMachine::PubSubHubBub.new('http://pubsubhubbub.appspot.com/publish').publish feeds
+      pub = EventMachine::PubSubHubbub.new('http://pubsubhubbub.appspot.com/publish').publish feeds
 
       pub.errback { fail }
       pub.callback {

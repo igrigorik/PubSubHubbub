@@ -4,7 +4,7 @@ EventMachine based / asynchronous PubSubHubbub client. Supports posting single o
 
 Full Spec: http://code.google.com/p/pubsubhubbub
 
-HTTP PubSub: Webhooks & PubSubHubbub: http://www.igvita.com/2009/06/28/http-pubsub-webhooks-pubsubhubbub
+HTTP PubSub: Webhooks & PubSubHubbub: http://www.igvita.com/2009/06/29/http-pubsub-webhooks-pubsubhubbub
 
 == Simple client example
 

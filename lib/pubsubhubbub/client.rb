@@ -30,6 +30,52 @@ module EventMachine
       r
     end
 
+    ##
+    # This will work only if ythe callback URL supports confirmation.
+    def subscribe(feed, callback, options = {})
+      options['hub.verify'] ||= "sync"
+      
+      params = {'hub.topic' => feed, 'hub.mode' => 'subscribe', 'hub.callback' => callback}.merge(options).to_params
+
+      r = EventMachine::HttpRequest.new(@hub).post :body => params, :head => {"User-Agent" => "PubSubHubbub Ruby", "Content-Type" => "application/x-www-form-urlencoded", "Content-Length" => params.size }
+      
+      r.callback { 
+        if r.response_header.status == 204
+          succeed r
+        else
+          fail r
+        end
+      }
+      
+      r.errback { 
+        fail
+      }
+      r
+    end
+    
+    ##
+    # This will work only if ythe callback URL supports confirmation.
+    def unsubscribe(feed, callback, options = {})
+      options['hub.verify'] ||= "sync"
+      
+      params = {'hub.topic' => feed, 'hub.mode' => 'unsubscribe', 'hub.callback' => callback}.merge(options).to_params 
+      
+      r = EventMachine::HttpRequest.new(@hub).post :body => params, :head => {"User-Agent" => "PubSubHubbub Ruby", "Content-Type" => "application/x-www-form-urlencoded", "Content-Length" => params.size }
+      
+      r.callback { 
+        if r.response_header.status == 204
+          succeed r
+        else
+          fail r
+        end
+      }
+      
+      r.errback { 
+        fail
+      }
+      r
+    end
+    
   end
 end
 

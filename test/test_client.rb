@@ -14,7 +14,7 @@ describe EventMachine::PubSubHubbub do
     EventMachine.run {
       pub = EventMachine::PubSubHubbub.new('http://pubsubhubbub.appspot.com/publish').publish "http://www.test.com/"
 
-      pub.errback { fail }
+      pub.errback { failed }
       pub.callback {
         pub.response_header.status.should == 204
         EventMachine.stop
@@ -27,7 +27,7 @@ describe EventMachine::PubSubHubbub do
       feeds = ['http://www.test.com', 'http://www.test.com/2']
       pub = EventMachine::PubSubHubbub.new('http://pubsubhubbub.appspot.com/publish').publish feeds
 
-      pub.errback { fail }
+      pub.errback { failed }
       pub.callback {
         pub.response_header.status.should == 204
         EventMachine.stop
@@ -39,7 +39,7 @@ describe EventMachine::PubSubHubbub do
     EventMachine.run {
       sub = EventMachine::PubSubHubbub.new('http://pubsubhubbub.appspot.com/').subscribe "http://blog.superfeedr.com/atom.xml", "http://superfeedr.com/hubbub", {}
       
-      sub.errback { fail }
+      sub.errback { failed }
       sub.callback {
         sub.response_header.status.should == 204
         EventMachine.stop
@@ -51,7 +51,7 @@ describe EventMachine::PubSubHubbub do
     EventMachine.run {
       sub = EventMachine::PubSubHubbub.new('http://pubsubhubbub.appspot.com/').unsubscribe "http://blog.superfeedr.com/atom.xml", "http://superfeedr.com/hubbub", {}
       
-      sub.errback { fail }
+      sub.errback { failed }
       sub.callback {
         sub.response_header.status.should == 204
         EventMachine.stop

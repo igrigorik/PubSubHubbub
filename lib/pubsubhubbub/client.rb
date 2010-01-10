@@ -29,6 +29,9 @@ module EventMachine
       }
 
       r.errback { fail }
+
+      yield r if block_given?
+
       r
     end
 

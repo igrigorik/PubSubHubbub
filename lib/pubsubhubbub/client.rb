@@ -10,7 +10,15 @@ module EventMachine
 
     HEADERS = {"User-Agent" => "PubSubHubbub Ruby", "Content-Type" => "application/x-www-form-urlencoded"}
 
-    def initialize(hub)
+    # Options
+    #   :basic -- to use basic auth with the hub. expects ['user','pass']
+    def initialize(hub,options={})
+      @basic_auth= options.delete(:basic)
+      @headers = if @basic_auth
+                   HEADERS.merge 'authorization' => @basic_auth
+                 else
+                   HEADERS
+                 end
       @hub = hub.kind_of?(URI) ? hub : URI::parse(hub)
     end
 
@@ -19,7 +27,7 @@ module EventMachine
         {'hub.url' => feed, 'hub.mode' => 'publish'}.to_params
       end.join("&")
 
-      r = EventMachine::HttpRequest.new(@hub).post :body => data, :head => HEADERS
+      r = EventMachine::HttpRequest.new(@hub).post :body => data, :head => @headers
       r.callback { 
         if r.response_header.status == 204
           succeed r
@@ -45,7 +53,7 @@ module EventMachine
       options['hub.verify'] ||= "sync"
 
       params = {'hub.topic' => feed, 'hub.mode' => cmd, 'hub.callback' => callback}.merge(options).to_params
-      r = EventMachine::HttpRequest.new(@hub).post :body => params, :head => HEADERS
+      r = EventMachine::HttpRequest.new(@hub).post :body => params, :head => @headers
 
       r.callback {
         if r.response_header.status == 204

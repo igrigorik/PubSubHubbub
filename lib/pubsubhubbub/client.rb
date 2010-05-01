@@ -36,7 +36,7 @@ module EventMachine
       end
 
       def request(opts)
-        r = EventMachine::HttpRequest.new(@hub).post opts
+        r = http_request(opts)
 
         r.callback do
           if r.response_header.status == 204
@@ -49,6 +49,10 @@ module EventMachine
         r.errback { fail }
         r
 
+      end
+
+      def http_request(opts)
+        EventMachine::HttpRequest.new(@hub).post opts
       end
   end
 end

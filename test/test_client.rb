@@ -22,9 +22,13 @@ describe EventMachine::PubSubHubbub do
       ).and_return(req)
       req.stub!(:callback) {EventMachine.stop}
 
-      timed_event_machine_run {
-        pub = EventMachine::PubSubHubbub.new 'http://example.com/hub',:head => {'authorization' => ['username','password']}
+      EventMachine.run {
+        pub = EventMachine::PubSubHubbub.new('http://example.com/hub', :head => {'authorization' => ['username','password']})
         pub.subscribe 'http://example.com/feed', 'http://example.com/callback'
+        pub.callback {
+          sub.response_header.status.should == 204
+          EM.stop
+        }
       }
     end
   end

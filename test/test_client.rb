@@ -10,6 +10,25 @@ describe EventMachine::PubSubHubbub do
     fail
   end
 
+  describe "protected hub" do
+    it "should accept basic auth options" do
+
+      EventMachine::HttpRequest.should_receive(:new).and_return(req = mock('request',:null_object=>true))
+      req.should_receive(:post).with(
+        :body => anything,
+        :head => hash_including(
+          'authorization'=> ['username','password']
+        )
+      ).and_return(req)
+      req.stub!(:callback) {EventMachine.stop}
+
+      timed_event_machine_run {
+        pub = EventMachine::PubSubHubbub.new 'http://example.com/hub',:head => {'authorization' => ['username','password']}
+        pub.subscribe 'http://example.com/feed', 'http://example.com/callback'
+      }
+    end
+  end
+
   it "should publish single feed to hub" do
     EventMachine.run {
       pub = EventMachine::PubSubHubbub.new('http://pubsubhubbub.appspot.com/publish').publish "http://www.test.com/"
@@ -56,7 +75,7 @@ describe EventMachine::PubSubHubbub do
         sub.response_header.status.should == 204
         EventMachine.stop
       }
-    }    
+    }
   end
 
 end

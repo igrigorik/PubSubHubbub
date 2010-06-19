@@ -10,7 +10,8 @@ module EventMachine
 
     HEADERS = {"User-Agent" => "PubSubHubbub Ruby", "Content-Type" => "application/x-www-form-urlencoded"}
 
-    def initialize(hub)
+    def initialize(hub, options={})
+      @headers = HEADERS.merge(options[:head]) if options[:head]
       @hub = hub.kind_of?(URI) ? hub : URI::parse(hub)
     end
 
@@ -19,7 +20,7 @@ module EventMachine
         {'hub.url' => feed, 'hub.mode' => 'publish'}.to_params
       end.join("&")
 
-      request(:body => data, :head => HEADERS)
+      request(:body => data, :head => @headers)
     end
 
     # These command will work only if the callback URL supports confirmation.
@@ -28,31 +29,30 @@ module EventMachine
 
     private
 
-      def command(cmd, feed, callback, options)
-        options['hub.verify'] ||= "sync"
-        params = {'hub.topic' => feed, 'hub.mode' => cmd, 'hub.callback' => callback}.merge(options).to_params
+    def command(cmd, feed, callback, options)
+      options['hub.verify'] ||= "sync"
+      params = {'hub.topic' => feed, 'hub.mode' => cmd, 'hub.callback' => callback}.merge(options).to_params
 
-        request(:body => params, :head => HEADERS)
-      end
+      request(:body => params, :head => @headers)
+    end
 
-      def request(opts)
-        r = http_request(opts)
+    def request(opts)
+      r = http_request(opts)
+      r.errback { fail }
 
-        r.callback do
-          if r.response_header.status == 204
-            succeed r
-          else
-            fail r
-          end
+      r.callback do
+        if r.response_header.status == 204
+          succeed r
+        else
+          fail r
         end
-
-        r.errback { fail }
-        r
-
       end
 
-      def http_request(opts)
-        EventMachine::HttpRequest.new(@hub).post opts
-      end
+      r
+    end
+
+    def http_request(opts)
+      EventMachine::HttpRequest.new(@hub).post opts
+    end
   end
 end

@@ -7,6 +7,7 @@
 module EventMachine
   class PubSubHubbub
     include EventMachine::Deferrable
+    include EventMachine::HttpEncoding
 
     HEADERS = {"User-Agent" => "PubSubHubbub Ruby", "Content-Type" => "application/x-www-form-urlencoded"}
 
@@ -17,7 +18,7 @@ module EventMachine
 
     def publish(*feeds)
       data = feeds.flatten.collect do |feed|
-        {'hub.url' => feed, 'hub.mode' => 'publish'}.to_params
+        form_encode_body({'hub.url' => feed, 'hub.mode' => 'publish'})
       end.join("&")
 
       request(:body => data, :head => @headers)
@@ -31,7 +32,8 @@ module EventMachine
 
     def command(cmd, feed, callback, options)
       options['hub.verify'] ||= "sync"
-      params = {'hub.topic' => feed, 'hub.mode' => cmd, 'hub.callback' => callback}.merge(options).to_params
+      params = {'hub.topic' => feed, 'hub.mode' => cmd, 'hub.callback' => callback}.merge(options)
+      params = form_encode_body(params)
 
       request(:body => params, :head => @headers)
     end

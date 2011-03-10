@@ -1,20 +1,9 @@
-require 'rake'
+require 'bundler'
+Bundler::GemHelper.install_tasks
 
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "pubsubhubbub"
-    gemspec.summary = "Asynchronous PubSubHubbub client for Ruby"
-    gemspec.description = gemspec.summary
-    gemspec.email = "ilya@igvita.com"
-    gemspec.homepage = "http://github.com/igrigorik/pubsubhubbub"
-    gemspec.authors = ["Ilya Grigorik"]
-    gemspec.add_dependency('eventmachine', '>= 0.12.9')
-    gemspec.add_dependency('em-http-request', '>= 0.1.5')
-    gemspec.rubyforge_project = "pubsubhubbub"
-  end
+require 'rspec/core/rake_task'
 
-  Jeweler::GemcutterTasks.new
-rescue LoadError
-  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
-end
+desc "Run all RSpec tests"
+RSpec::Core::RakeTask.new(:spec)
+
+task :default => :spec

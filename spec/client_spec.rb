@@ -1,5 +1,4 @@
-require 'rubygems'
-require 'spec'
+# require 'rubygems'
 require 'eventmachine'
 require 'lib/pubsubhubbub'
 
@@ -13,7 +12,7 @@ describe EventMachine::PubSubHubbub do
   describe "protected hub" do
     it "should accept basic auth options" do
 
-      EventMachine::HttpRequest.should_receive(:new).and_return(req = mock('request',:null_object=>true))
+      EventMachine::HttpRequest.should_receive(:new).and_return(req = mock('request').as_null_object)
       req.should_receive(:post).with(
         :body => anything,
         :head => hash_including(
@@ -57,23 +56,23 @@ describe EventMachine::PubSubHubbub do
       }
     }
   end
-  
+
   it "should subscribe a single feed to hub" do
     EventMachine.run {
       sub = EventMachine::PubSubHubbub.new('http://pubsubhubbub.appspot.com/').subscribe "http://blog.superfeedr.com/atom.xml", "http://superfeedr.com/hubbub", {}
-      
+
       sub.errback { failed }
       sub.callback {
         sub.response_header.status.should == 204
         EventMachine.stop
       }
-    }    
+    }
   end
-  
+
   it "should unsubscribe a single feed to hub" do
     EventMachine.run {
       sub = EventMachine::PubSubHubbub.new('http://pubsubhubbub.appspot.com/').unsubscribe "http://blog.superfeedr.com/atom.xml", "http://superfeedr.com/hubbub", {}
-      
+
       sub.errback { failed }
       sub.callback {
         sub.response_header.status.should == 204
